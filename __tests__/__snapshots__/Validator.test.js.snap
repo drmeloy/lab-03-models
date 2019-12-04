@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Age validator when field is required returns that the field is required if no value given 1`] = `"age is required"`;
+
+exports[`Name validator when field is required returns that the field is required if no value given 1`] = `"name is required"`;

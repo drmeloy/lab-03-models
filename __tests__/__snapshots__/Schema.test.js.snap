@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Schema tests throws error on object not matching schema 1`] = `"invalid schema >> Error: name is required,Error: Cannot cast >>SUP?!<< to Number"`;
