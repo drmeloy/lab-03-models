@@ -68,7 +68,7 @@ describe('updateJSON', () => {
   it('should update a file\'s JSON', () => {
     return updateJSON('./cool/my-dog', { age: 6 })
       .then(updatedObj => {
-        expect()
+        expect(updatedObj).toEqual({ name: 'Rover', age: 6 });
       });
   });
 });
