@@ -73,6 +73,12 @@ describe('updateJSON', () => {
         expect(updatedObj).toEqual({ name: 'Rover', age: 6 });
       });
   });
+  it('should update a file\'s JSON with multiple parameters', () => {
+    return updateJSON('./cool/my-dog', { age: 6, hairy: 'very' })
+      .then(updatedObj => {
+        expect(updatedObj).toEqual({ name: 'Rover', age: 6, hairy: 'very' });
+      });
+  });
 });
 
 describe('deleteFile', () => {
