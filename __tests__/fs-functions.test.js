@@ -10,7 +10,8 @@ const { mkdirp,
   writeJSON,
   readJSON,
   readDirectoryJSON,
-  updateJSON
+  updateJSON,
+  deleteFile
 } = require('../lib/fs-functions');
 
 jest.mock('fs', () => ({
@@ -18,7 +19,8 @@ jest.mock('fs', () => ({
     mkdir: jest.fn(() => Promise.resolve()),
     writeFile: jest.fn(() => Promise.resolve()),
     readFile: jest.fn(() => Promise.resolve(JSON.stringify({ name: 'Rover' }))),
-    readdir: jest.fn(() => Promise.resolve(['./cool', './sure']))
+    readdir: jest.fn(() => Promise.resolve(['./cool', './sure'])),
+    rmdir: jest.fn(() => Promise.resolve())
   }
 }));
 
@@ -69,6 +71,15 @@ describe('updateJSON', () => {
     return updateJSON('./cool/my-dog', { age: 6 })
       .then(updatedObj => {
         expect(updatedObj).toEqual({ name: 'Rover', age: 6 });
+      });
+  });
+});
+
+describe('deleteFile', () => {
+  it('should delete a file', () => {
+    return deleteFile('./cool')
+      .then(() => {
+        expect(fs.rmdir).toHaveBeenLastCalledWith('./cool');
       });
   });
 });
