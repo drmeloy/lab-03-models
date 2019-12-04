@@ -1,10 +1,3 @@
-// mkdirp - make a directory and all parent directories
-// writeJSON - write an object to a file
-// readJSON - read an object from a file
-// readDirectoryJSON - read all files in a directory as objects
-// updateJSON - update a files JSON
-// deleteFile - delete a file
-
 const fs = require('fs').promises;
 const { mkdirp, 
   writeJSON,
@@ -20,7 +13,7 @@ jest.mock('fs', () => ({
     writeFile: jest.fn(() => Promise.resolve()),
     readFile: jest.fn(() => Promise.resolve(JSON.stringify({ name: 'Rover' }))),
     readdir: jest.fn(() => Promise.resolve(['./cool', './sure'])),
-    rmdir: jest.fn(() => Promise.resolve())
+    unlink: jest.fn(() => Promise.resolve())
   }
 }));
 
@@ -85,7 +78,7 @@ describe('deleteFile', () => {
   it('should delete a file', () => {
     return deleteFile('./cool')
       .then(() => {
-        expect(fs.rmdir).toHaveBeenLastCalledWith('./cool');
+        expect(fs.unlink).toHaveBeenLastCalledWith('./cool');
       });
   });
 });
