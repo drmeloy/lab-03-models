@@ -8,19 +8,6 @@ const { writeJSON,
   deleteFile
 } = require('../lib/fs-functions');
 
-const dogSchema = new Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  age: {
-    type: Number
-  },
-  weight: {
-    type: String
-  }
-});
-
 jest.mock('fs', () => ({
   promises: {
     mkdir: jest.fn(() => Promise.resolve()),
@@ -42,40 +29,52 @@ jest.mock('../lib/fs-functions', () => ({
 
 jest.mock('uuid/v4', () => () => 'foo');
 
+
+const dogSchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  age: {
+    type: Number
+  },
+  weight: {
+    type: String
+  }
+});
 const MODEL_NAME = 'Dog';
 const Dog = new Model(MODEL_NAME, dogSchema);
+const ID = 'foo';
+const ID_PATH = `./${MODEL_NAME}/foo`;
 
 describe('Model', () => {
-  it('should create a new type when instantiated with a type name and schema', () => {
+  it('creating new Model calls mkdirp', () => {
     expect(mkdirp).toHaveBeenLastCalledWith(`./${MODEL_NAME}`);
   });
 
-  it('should create a new type instance when model type uses create method', () => {
+  it('creating new file calls writeJSON', () => {
     Dog.create({ name: 'spot', age: 5, weight: '20 lbs' });
-    expect(writeJSON).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`, { name: 'spot', age: 5, weight: '20 lbs' });
+    expect(writeJSON).toHaveBeenLastCalledWith(ID_PATH, { name: 'spot', age: 5, weight: '20 lbs' });
   });
 
-  it('should find a dog by its id', async() => {
-    await Dog.findById('foo');
-    expect(readJSON).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`);
+  it('findById method calls readJSON', async() => {
+    await Dog.findById(ID);
+    expect(readJSON).toHaveBeenLastCalledWith(ID_PATH);
   });
 
-  it('should find all dogs', () => {
-    Dog.create({ name: 'spot', age: 5, weight: '20 lbs' });
-    Dog.create({ name: 'spot', age: 5, weight: '20 lbs' });
-    Dog.create({ name: 'spot', age: 5, weight: '20 lbs' });
+  it('find method calls readDirectoryJSON', () => {
     Dog.find();
     expect(readDirectoryJSON).toHaveBeenCalledTimes(1);
   });
 
-  it('should find a dog by id and update it', async() => {
+  it('findByIdAndUpdate calls updateJSON', async() => {
     const toUpdate = { name: 'Taylor' };
-    await Dog.findByIdAndUpdate('foo', toUpdate);
-    expect(updateJSON).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`, toUpdate);
+    await Dog.findByIdAndUpdate(ID, toUpdate);
+    expect(updateJSON).toHaveBeenLastCalledWith(ID_PATH, toUpdate);
   });
 
-  it('should find a dob by id and delete it', () => {
-    Dog.findByIdAndDelete('foo');
-    expect(deleteFile).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`);
+  it('findByIdAndDelete calls deleteFile', () => {
+    Dog.findByIdAndDelete(ID);
+    expect(deleteFile).toHaveBeenLastCalledWith(ID_PATH);
   });
 });
