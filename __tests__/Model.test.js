@@ -8,16 +8,6 @@ const { writeJSON,
   deleteFile
 } = require('../lib/fs-functions');
 
-jest.mock('fs', () => ({
-  promises: {
-    mkdir: jest.fn(() => Promise.resolve()),
-    writeFile: jest.fn(() => Promise.resolve()),
-    readFile: jest.fn(() => Promise.resolve(JSON.stringify({ name: 'Rover' }))),
-    readdir: jest.fn(() => Promise.resolve(['./cool', './sure'])),
-    unlink: jest.fn(() => Promise.resolve())
-  }
-}));
-
 jest.mock('../lib/fs-functions', () => ({
   mkdirp: jest.fn(),
   writeJSON: jest.fn(),
@@ -28,7 +18,6 @@ jest.mock('../lib/fs-functions', () => ({
 }));
 
 jest.mock('uuid/v4', () => () => 'foo');
-
 
 const dogSchema = new Schema({
   name: {
@@ -42,6 +31,7 @@ const dogSchema = new Schema({
     type: String
   }
 });
+
 const MODEL_NAME = 'Dog';
 const Dog = new Model(MODEL_NAME, dogSchema);
 const ID = 'foo';
