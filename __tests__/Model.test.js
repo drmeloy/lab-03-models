@@ -1,12 +1,9 @@
 const fs = require('fs').promises;
 const Model = require('../lib/Model');
 const Schema = require('../lib/Schema');
-const { mkdirp, 
-  writeJSON,
-  readJSON,
-  readDirectoryJSON,
-  updateJSON,
-  deleteFile
+const { writeJSON,
+  mkdirp,
+  readJSON
 } = require('../lib/fs-functions');
 
 const dogSchema = new Schema({
@@ -32,16 +29,30 @@ jest.mock('fs', () => ({
   }
 }));
 
-const Dog = new Model('Dog', dogSchema);
+jest.mock('../lib/fs-functions', () => ({
+  mkdirp: jest.fn(),
+  writeJSON: jest.fn(),
+  readJSON: jest.fn()
+}));
+
+jest.mock('uuid/v4', () => () => 'foo');
+
+const MODEL_NAME = 'Dog';
+const Dog = new Model(MODEL_NAME, dogSchema);
 
 describe('Model', () => {
   it('should create a new type when instantiated with a type name and schema', () => {
-    expect(fs.mkdir).toHaveBeenLastCalledWith('./Dog', { recursive: true });
+    expect(mkdirp).toHaveBeenLastCalledWith(`./${MODEL_NAME}`);
   });
 
   it('should create a new type instance when model type uses create method', () => {
     Dog.create({ name: 'spot', age: 5, weight: '20 lbs' });
-    expect(writeJSON).toHaveBeenCalledWith(expect.any(String), { name: 'spot', age: 5, weight: '20 lbs' });
+    expect(writeJSON).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`, { name: 'spot', age: 5, weight: '20 lbs' });
+  });
+
+  it('should find a dog by its id', async() => {
+    await Dog.findById('foo');
+    expect(readJSON).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`);
   });
 });
 
