@@ -4,7 +4,8 @@ const { writeJSON,
   mkdirp,
   readJSON,
   readDirectoryJSON,
-  updateJSON
+  updateJSON,
+  deleteFile
 } = require('../lib/fs-functions');
 
 const dogSchema = new Schema({
@@ -35,7 +36,8 @@ jest.mock('../lib/fs-functions', () => ({
   writeJSON: jest.fn(),
   readJSON: jest.fn(),
   readDirectoryJSON: jest.fn(),
-  updateJSON: jest.fn()
+  updateJSON: jest.fn(),
+  deleteFile: jest.fn()
 }));
 
 jest.mock('uuid/v4', () => () => 'foo');
@@ -71,17 +73,9 @@ describe('Model', () => {
     await Dog.findByIdAndUpdate('foo', toUpdate);
     expect(updateJSON).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`, toUpdate);
   });
+
+  it('should find a dob by id and delete it', () => {
+    Dog.findByIdAndDelete('foo');
+    expect(deleteFile).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`);
+  });
 });
-
-// mkdirp - make a directory and all parent directories
-// writeJSON - write an object to a file
-// readJSON - read an object from a file
-// readDirectoryJSON - read all files in a directory as objects
-// updateJSON - update a files JSON
-// deleteFile - delete a file
-
-// create - mkdirp/writeJSON
-// findById - readJSON
-// find - readDirectoryJSON
-// findByIdAndUpdate - 
-// findByIdAndDelete - 
