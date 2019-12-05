@@ -3,7 +3,8 @@ const Schema = require('../lib/Schema');
 const { writeJSON,
   mkdirp,
   readJSON,
-  readDirectoryJSON
+  readDirectoryJSON,
+  updateJSON
 } = require('../lib/fs-functions');
 
 const dogSchema = new Schema({
@@ -33,7 +34,8 @@ jest.mock('../lib/fs-functions', () => ({
   mkdirp: jest.fn(),
   writeJSON: jest.fn(),
   readJSON: jest.fn(),
-  readDirectoryJSON: jest.fn()
+  readDirectoryJSON: jest.fn(),
+  updateJSON: jest.fn()
 }));
 
 jest.mock('uuid/v4', () => () => 'foo');
@@ -62,6 +64,12 @@ describe('Model', () => {
     Dog.create({ name: 'spot', age: 5, weight: '20 lbs' });
     Dog.find();
     expect(readDirectoryJSON).toHaveBeenCalledTimes(1);
+  });
+
+  it('should find a dog by id and update it', async() => {
+    const toUpdate = { name: 'Taylor' };
+    await Dog.findByIdAndUpdate('foo', toUpdate);
+    expect(updateJSON).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`, toUpdate);
   });
 });
 
