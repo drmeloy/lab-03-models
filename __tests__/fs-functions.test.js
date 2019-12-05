@@ -54,6 +54,7 @@ describe('readDirectoryJSON', () => {
     return readDirectoryJSON('./cool')
       .then(fileContents => {
         expect(fs.readdir).toHaveBeenLastCalledWith('./cool');
+        expect(fileContents).toHaveLength(2);
         expect(fileContents).toEqual([{ name: 'Rover' }, { name: 'Rover' }]);
       });
   });

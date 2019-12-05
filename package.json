@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --verbose --coverage",
-    "tw": "npm run test -- --watch",
+    "tw": "npm run test -- --watchAll",
     "lint": "eslint '**/*.js'"
   },
   "author": "",
