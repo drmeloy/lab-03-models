@@ -1,9 +1,9 @@
-const fs = require('fs').promises;
 const Model = require('../lib/Model');
 const Schema = require('../lib/Schema');
 const { writeJSON,
   mkdirp,
-  readJSON
+  readJSON,
+  readDirectoryJSON
 } = require('../lib/fs-functions');
 
 const dogSchema = new Schema({
@@ -32,7 +32,8 @@ jest.mock('fs', () => ({
 jest.mock('../lib/fs-functions', () => ({
   mkdirp: jest.fn(),
   writeJSON: jest.fn(),
-  readJSON: jest.fn()
+  readJSON: jest.fn(),
+  readDirectoryJSON: jest.fn()
 }));
 
 jest.mock('uuid/v4', () => () => 'foo');
@@ -53,6 +54,14 @@ describe('Model', () => {
   it('should find a dog by its id', async() => {
     await Dog.findById('foo');
     expect(readJSON).toHaveBeenLastCalledWith(`./${MODEL_NAME}/foo`);
+  });
+
+  it('should find all dogs', () => {
+    Dog.create({ name: 'spot', age: 5, weight: '20 lbs' });
+    Dog.create({ name: 'spot', age: 5, weight: '20 lbs' });
+    Dog.create({ name: 'spot', age: 5, weight: '20 lbs' });
+    Dog.find();
+    expect(readDirectoryJSON).toHaveBeenCalledTimes(1);
   });
 });
 
